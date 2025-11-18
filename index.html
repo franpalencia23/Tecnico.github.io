@@ -9,25 +9,31 @@
 <body>
 
   <!-- Sidebar -->
-<div class="sidebar">
-  <h2>🍍 Piña Digital</h2>
-  <ul>
-    <li><a href="Analisis.html">📊 Análisis Estadístico</a></li>
-    <li><a href="inventario.html">📦 Inventario</a></li>
-    <li><a href="notasv.html">🧾 Notas de Venta</a></li>
-  </ul>
-  <ul>
-    <li><a href="tienda.html">🏠 Tienda Virtual</a></li>
-  </ul>
-</div>
+  <div class="sidebar">
+    <h2>🍍 Piña Digital</h2>
+
+    <nav>
+      <a href="Analisis.html">📊 Análisis Estadístico</a>
+      <a href="inventario.html">📦 Inventario</a>
+      <a href="notasv.html">🧾 Notas de Venta</a>
+      <a href="tienda.html">🏠 Tienda Virtual</a>
+    </nav>
+  </div>
 
   <!-- Contenido -->
   <div class="content">
+
     <!-- Header -->
     <div class="header">
-      <img src="Piña Digita.png" alt="La Piña Logo">
 
-      <div class="search-box">
+      <!-- Logo + Marca -->
+      <div class="brand">
+        <img src="Piña Digita.png" alt="La Piña Logo">
+        <span style="font-weight:600; font-size:18px;">Servicios Técnicos</span>
+      </div>
+
+      <!-- Buscador -->
+      <div class="controls">
         <input type="text" placeholder="Buscar...">
       </div>
 
@@ -38,42 +44,50 @@
           <span class="user-name"></span>
           <span class="arrow">▼</span>
         </button>
+
         <div id="dropdownMenu" class="dropdown-content">
           <a href="#">👤 Perfil</a>
           <a href="#">⚙ Configuración</a>
           <a href="login.html">🚪 Cerrar sesión</a>
         </div>
       </div>
+
     </div>
 
-    <!-- Tabla de servicios -->
-    <h2>Servicios de Soporte Técnico</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Cliente</th>
-          <th>Celular</th>
-          <th>Número</th>
-          <th>F.Emisión</th>
-          <th>Marca</th>
-          <th>Costo</th>
-          <th>Acción</th>
-        </tr>
-      </thead>
-      <tbody id="tabla-servicios">
-        <!-- Supabase cargará aquí los datos -->
-      </tbody>
-    </table>
+    <!-- Tabla envuelta en un card bonito -->
+    <div class="table-wrapper">
+      <h2 style="margin-bottom:12px;">Servicios de Soporte Técnico</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Celular</th>
+            <th>Número</th>
+            <th>F.Emisión</th>
+            <th>Marca</th>
+            <th>Costo</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-servicios">
+          <!-- Aquí Supabase cargará los datos -->
+        </tbody>
+      </table>
+    </div>
+
   </div>
 
-  <!-- Botón (+) -->
+  <!-- Botón flotante (+) -->
   <button id="openModal" class="btn-plus">+</button>
 
   <!-- Modal -->
   <div id="modalForm" class="modal">
     <div class="modal-content">
-      <h2>Nuevo Servidor Técnico</h2>
+      <h2>Nuevo Servicio Técnico</h2>
+
       <form id="form-servicio">
+
         <label>Cliente</label>
         <input id="cliente" type="text" required>
 
@@ -93,9 +107,10 @@
         <input id="marca" type="text">
 
         <div class="form-actions">
-          <button type="button" id="closeModal" class="btn-cancelar">Cancelar</button>
-          <button type="submit" class="btn-guardar">Guardar</button>
+          <button type="button" id="closeModal" class="btn btn-secondary">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
         </div>
+
       </form>
     </div>
   </div>
@@ -114,9 +129,9 @@
 
     openModal.onclick = () => modal.style.display = "flex";
     closeModalBtn.onclick = () => modal.style.display = "none";
-    window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; }
+    window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; };
 
-    // Menú desplegable usuario
+    // Menú usuario
     const userBtn = document.getElementById("userBtn");
     const dropdownMenu = document.getElementById("dropdownMenu");
     const arrow = document.querySelector(".arrow");
