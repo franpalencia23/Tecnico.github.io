@@ -1,67 +1,90 @@
-document.getElementById("productoForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
+// ===============================
+// CONFIGURACIÓN DE SUPABASE
+// ===============================
+const SUPABASE_URL = "https://fjppdwbkbpmcbzbyjhzt.supabase.coL";
+const SUPABASE_KEY = "Tsb_publishable_ZJ6fQfMjogGJX2V_ORYvDw_SGF3SFOY";
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Capturar valores del formulario
-    const nombre = document.getElementById("nombre").value.trim();
-    const precio = document.getElementById("precio").value.trim();
-    const descripcion = document.getElementById("descripcion").value.trim();
-    const marca = document.getElementById("marca").value.trim();
-    const id_categoria = document.getElementById("id_categoria").value.trim();
-    const imagenInput = document.getElementById("imagen");
+// ===============================
+// CARGAR SERVICIOS
+// ===============================
+async function cargarServicios() {
+    const tbody = document.getElementById("tabla-servicios");
+    tbody.innerHTML = "<tr><td colspan='7'>Cargando...</td></tr>";
 
-    let imagen = null;
+    const { data, error } = await supabaseClient.from("servicios").select("*");
 
-    // Leer imagen si existe
-    if (imagenInput.files.length > 0) {
-        imagen = await convertirBase64(imagenInput.files[0]);
-    }
-
-    // Evitar errores por campos vacíos
-    const data = {
-        nombre: nombre || null,
-        precio: precio !== "" ? parseFloat(precio) : null,
-        descripcion: descripcion || null,
-        marca: marca || null,
-        id_categoria: id_categoria !== "" ? parseInt(id_categoria) : null,
-        imagen: imagen
-    };
-
-    try {
-        const response = await fetch("http://localhost:3000/productos", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        });
-
-        const result = await response.json();
-        console.log(result);
-
-        Swal.fire({
-            icon: "success",
-            title: "Producto registrado",
-            text: "Se ha guardado correctamente"
-        });
-
-        e.target.reset();
-    } catch (error) {
+    if (error) {
+        tbody.innerHTML = "<tr><td colspan='7'>Error al cargar datos</td></tr>";
         console.error(error);
-
-        Swal.fire({
-            icon: "error",
-            title: "Error al registrar",
-            text: "Revisa los datos ingresados"
-        });
+        return;
     }
-});
 
-// Convertir archivo a base64
-function convertirBase64(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = (error) => reject(error);
-        reader.readAsDataURL(file);
+    tbody.innerHTML = "";
+
+    data.forEach(serv => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${serv.cliente}</td>
+            <td>${serv.celular}</td>
+            <td>${serv.id}</td>
+            <td>${serv.fecha?.split("T")[0]}</td>
+            <td>${serv.marca}</td>
+            <td>${serv.costo}</td>
+            <td>
+              <button onclick="eliminarServicio(${serv.id})">🗑</button>
+            </td>
+          </tr>
+        `;
     });
 }
+
+// ===============================
+// INSERTAR NUEVO SERVICIO
+// ===============================
+document.getElementById("form-servicio").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const nuevo = {
+        cliente: document.getElementById("cliente").value,
+        descripcion: document.getElementById("descripcion").value,
+        estado: document.getElementById("estado").value,
+        celular: document.getElementById("celular").value,
+        costo: document.getElementById("costo").value,
+        marca: document.getElementById("marca").value
+    };
+
+    const { error } = await supabaseClient.from("servicios").insert([nuevo]);
+
+    if (error) {
+        alert("Error al insertar");
+        console.error(error);
+        return;
+    }
+
+    alert("Servicio agregado");
+    document.getElementById("modalForm").style.display = "none";
+    cargarServicios();
+});
+
+// ===============================
+// ELIMINAR
+// ===============================
+async function eliminarServicio(id) {
+    if (!confirm("¿Seguro que deseas eliminar este registro?")) return;
+
+    const { error } = await supabaseClient.from("servicios").delete().eq("id", id);
+
+    if (error) {
+        alert("Error al eliminar");
+        console.error(error);
+        return;
+    }
+
+    cargarServicios();
+}
+
+// ===============================
+// INICIAR
+// ===============================
+window.onload = () => cargarServicios();
